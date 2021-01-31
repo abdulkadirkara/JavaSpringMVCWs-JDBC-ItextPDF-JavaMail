@@ -2,7 +2,7 @@ package com.adoptez1plumbier.rest;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import com.adoptez1plumbier.beans.Entity;
 import com.adoptez1plumbier.beans.PdfData;
 import com.adoptez1plumbier.beans.Section;
@@ -40,60 +39,55 @@ public class PlumbierController {
 		CreatePdfUtil createPdfUtil = new CreatePdfUtil();
 		PdfData pdfData = new PdfData();
 		List<Section> sections = null;
-		List<SectionData> sectionDatas = null;
-		List<SectionData> findSid = plumbierDao.findBySid();
-		long sid = 1;
 		try {
-
 			List<SectionData> sectiondatas = null;
 			sections = plumbierDao.getSection();
-			sectionDatas = new ArrayList<SectionData>();
 			SectionData sectionData = new SectionData();
 			
+			pdfData.setUid(plumbierDao.findById(data.getUserId()));
+			User user = new User();
+			user = plumbierDao.findById(data.getUserId());
+			pdfData.setName(user.getName() + "_" + data.getUserId());
+			pdfData.setPdf(IOUtils.toByteArray(createPdfUtil.createPdf(data)));
+			plumbierDao.plumbierPDFSave(pdfData);
+			List<PdfData> pdf= plumbierDao.findAllPDF();
+			PdfData pdfdata = pdf.get(pdf.size()-1);
+			sectionData.setSid(pdfdata.getId());
+			
 			if (!data.equals(null)) {
-				for (int x = 0; x < findSid.size(); x++) {
-					if (findSid.get(x).getSid() != sid) {
-						
-						for (int j = 0; j < data.getSections().size(); j++) {
-							if (data.getSections().size() > 0) {
-								sectiondatas = data.getSections().get(j).getSectionData();
-								if (data.getSections().get(j).getSectionType() == sections.get(j).getSectionType()) {
-									if (sectiondatas.size() > 0) {
-										for (int d = 0; d < sectiondatas.size(); d++) {
-											sectionData.setSid(sid);
-											sectionData.setSectionId(data.getSections().get(j).getSectionType());
-											sectionData.setUserId(plumbierDao.findById(data.getUserId()));
-											sectionData.setFieldName(sectiondatas.get(d).getFieldName());
-											sectionData.setFieldInput(sectiondatas.get(d).getFieldInput());
-											sectionData.setFieldIsNumberSecondSection(
-													sectiondatas.get(d).getIsFieldIsNumberSecondSection());
-											sectionData.setFieldsImageSecondSection(
-													sectiondatas.get(d).getFieldsImageSecondSection());
-											sectionData.setFieldsImageSecondSection(
-													sectiondatas.get(d).getFieldsImageSecondSection());
-											sectionData.setFieldsFeeling(sectiondatas.get(d).getFieldsFeeling());
-											sectionData.setFieldsImageSecondSection(
-													sectiondatas.get(d).getFieldsImageSecondSection());
-											plumbierDao.plumbiersave(sectionData);
-										}
-									}
-
+				for (int j = 0; j < data.getSections().size(); j++) {
+					if (data.getSections().size() > 0) {
+						sectiondatas = data.getSections().get(j).getSectionData();
+						if (data.getSections().get(j).getSectionType() == sections.get(j).getSectionType()) {
+							if (sectiondatas.size() > 0) {
+								for (int d = 0; d < sectiondatas.size(); d++) {
+									sectionData.setSid(pdfdata.getId());
+									sectionData.setSectionId(data.getSections().get(j).getSectionType());
+									sectionData.setUserId(plumbierDao.findById(data.getUserId()));
+									sectionData.setFieldName(sectiondatas.get(d).getFieldName());
+									sectionData.setFieldInput(sectiondatas.get(d).getFieldInput());
+									sectionData.setFieldIsNumberSecondSection(
+											sectiondatas.get(d).getIsFieldIsNumberSecondSection());
+									sectionData.setFieldsImageSecondSection(
+											sectiondatas.get(d).getFieldsImageSecondSection());
+									sectionData.setFieldsImageSecondSection(
+											sectiondatas.get(d).getFieldsImageSecondSection());
+									sectionData.setFieldsFeeling(sectiondatas.get(d).getFieldsFeeling());
+									sectionData.setFieldsImageSecondSection(
+											sectiondatas.get(d).getFieldsImageSecondSection());
+									plumbierDao.plumbiersave(sectionData);
 								}
-
 							}
+
 						}
-						break;
+
 					}
-					else
-						sid++;
 				}
 
-				pdfData.setUid(plumbierDao.findById(data.getUserId()));
-				User user = new User();
-				user = plumbierDao.findById(data.getUserId());
-				pdfData.setName(user.getName() + "_" + data.getUserId());
-				pdfData.setPdf(IOUtils.toByteArray(createPdfUtil.createPdf(data)));
-				plumbierDao.plumbierPDFSave(pdfData);
+				returnData.setMessage(ErrorType.SUCCESS.getMessage());
+				returnData.setMessage(ErrorType.SUCCESS.getCode());
+				returnData.setData(data);
+				response = new ResponseEntity<ServiceResponse<Entity>>(returnData, HttpStatus.OK);
 
 			} else {
 				returnData.setMessage(ErrorType.ERROR.getMessage());
@@ -101,17 +95,16 @@ public class PlumbierController {
 				response = new ResponseEntity<ServiceResponse<Entity>>(returnData, HttpStatus.BAD_REQUEST);
 			}
 
-			returnData.setMessage(ErrorType.SUCCESS.getMessage());
-			returnData.setMessage(ErrorType.SUCCESS.getCode());
-			returnData.setData(data);
+		} catch (
 
-		} catch (Exception ex) {
+		Exception ex) {
 			ex.printStackTrace();
 			returnData.setData(data);
 			returnData.setMessage(ErrorType.ERROR.getMessage());
 			returnData.setMessage(ErrorType.ERROR.getCode());
 			response = new ResponseEntity<ServiceResponse<Entity>>(returnData, HttpStatus.BAD_REQUEST);
 		}
+
 		return response;
 	}
 
@@ -247,7 +240,6 @@ public class PlumbierController {
 		return response;
 	}
 
-	
 	@RequestMapping(value = { "/getUserfindById" }, method = { RequestMethod.GET })
 	public ResponseEntity<ServiceResponse<UserData>> getUserfindById(@RequestParam("id") long uid) {
 		ResponseEntity<ServiceResponse<UserData>> response = null;
@@ -269,9 +261,6 @@ public class PlumbierController {
 		return response;
 	}
 
-	
-	
-	
 	@RequestMapping(value = "/downloadPdf", method = RequestMethod.GET)
 	public void downloadPdfFile(@RequestParam("id") Long id, HttpServletResponse response) throws Exception {
 
@@ -291,14 +280,14 @@ public class PlumbierController {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	@RequestMapping(value = { "/findByDataUid" }, method = { RequestMethod.GET })
 	public ResponseEntity<ServiceResponse<UserData>> plumbierFindByUid(@RequestParam("id") long uId) {
 		ResponseEntity<ServiceResponse<UserData>> response = null;
 		ServiceResponse<UserData> returnData = new ServiceResponse<UserData>();
 		try {
 			UserData entity = this.plumbierDao.plumbierFindAllUserData(uId);
-			
+
 			if (!entity.equals(null)) {
 				returnData.setData(entity);
 				returnData.setMessage(ErrorType.SUCCESS.getMessage());
@@ -313,4 +302,5 @@ public class PlumbierController {
 		}
 		return response;
 	}
+
 }

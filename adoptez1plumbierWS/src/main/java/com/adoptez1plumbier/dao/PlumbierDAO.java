@@ -54,4 +54,7 @@ public interface PlumbierDAO {
 
 	List<SectionData> findBySid();
 
+	List<PdfData> findAllPDF();
+
+
 }

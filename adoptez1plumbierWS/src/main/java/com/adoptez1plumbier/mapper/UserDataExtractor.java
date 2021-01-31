@@ -25,13 +25,14 @@ public class UserDataExtractor  implements ResultSetExtractor<UserData>{
 		while (rs.next()) {
 			User user=new User();
 			user.setId(rs.getLong("UID"));
-			id=user.getId();
 			user.setName(rs.getString("NAME"));
 			user.setUsername(rs.getString("USERNAME"));
 			user.setPhone(rs.getString("PHONE"));
 			user.setProfileImg(rs.getString("IMG"));
 			userData.setUserInformation(user);
 				sectionData=new SectionData();
+				sectionData.setId(rs.getLong("ID"));
+				sectionData.setDate(rs.getString("DATE"));
 				sectionData.setFieldName(rs.getString("FIELDNAME"));
 				sectionData.setFieldInput(rs.getString("FIELDINPUT"));
 				sectionData.setDate(rs.getString("DATE"));
