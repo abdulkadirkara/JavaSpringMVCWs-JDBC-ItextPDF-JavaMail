@@ -1,7 +1,6 @@
 package com.adoptez1plumbier.beans;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class SectionData implements Serializable {
 
@@ -18,7 +17,9 @@ public class SectionData implements Serializable {
 	private int fieldNumberFirstSection;
 	private boolean fieldIsNumberSecondSection;
 	private String fieldsImageSecondSection;
+	private String fieldsImageSecondSectionData;
 	private int fieldsFeeling;
+
 
 	public long getId() {
 		return id;
@@ -66,6 +67,14 @@ public class SectionData implements Serializable {
 
 	public void setFieldsImageSecondSection(String fieldsImageSecondSection) {
 		this.fieldsImageSecondSection = fieldsImageSecondSection;
+	}
+	
+	public String getFieldsImageSecondSectionData() {
+		return fieldsImageSecondSectionData;
+	}
+
+	public void setFieldsImageSecondSectionData(String fieldsImageSecondSectionData) {
+		this.fieldsImageSecondSectionData = fieldsImageSecondSectionData;
 	}
 
 	public int getFieldsFeeling() {

@@ -2,18 +2,11 @@ package com.adoptez1plumbier.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.adoptez1plumbier.beans.Entity;
 import com.adoptez1plumbier.beans.SectionData;
 import com.adoptez1plumbier.beans.User;
-import com.adoptez1plumbier.dto.Feeling;
-import com.adoptez1plumbier.dto.Palace;
-import com.adoptez1plumbier.dto.WorkProp;
 
 
 public class PlumbierRowMapper implements RowMapper<SectionData>{

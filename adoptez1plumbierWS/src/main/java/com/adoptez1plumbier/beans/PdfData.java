@@ -5,13 +5,22 @@ import java.util.Date;
 public class PdfData {
 	
 	private long id;
+	private String pdfid;
 	private User uid;
+	private long workId;
 	private Date date;
 	private String name;
+	private String signature;
 	private byte[] pdf;
 	
 	
 	
+	public String getSignature() {
+		return signature;
+	}
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
 	public long getId() {
 		return id;
 	}
@@ -42,6 +51,19 @@ public class PdfData {
 	public void setPdf(byte[] pdf) {
 		this.pdf = pdf;
 	}
+	public long getWorkId() {
+		return workId;
+	}
+	public void setWorkId(long workId) {
+		this.workId = workId;
+	}
+	public String getPdfid() {
+		return pdfid;
+	}
+	public void setPdfid(String pdfid) {
+		this.pdfid = pdfid;
+	}
+	
 	
 
 }

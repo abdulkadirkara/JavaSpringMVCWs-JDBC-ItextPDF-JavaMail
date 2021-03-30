@@ -9,8 +9,8 @@ public class ServiceResponse<T> implements Serializable{
 	
 	
 	private static final long serialVersionUID = -5664625943292111254L;
-	private String message = ErrorType.SUCCESS.getMessage();
-	private String code = ErrorType.SUCCESS.getCode();
+	private String message = null;
+//	private String code = ErrorType.SUCCESS.getCode();
 	private T data = null;
 	public String getMessage() {
 		return message;
@@ -24,11 +24,13 @@ public class ServiceResponse<T> implements Serializable{
 	public void setData(T data) {
 		this.data = data;
 	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
+	
+	
+//	public String getCode() {
+//		return code;
+//	}
+//	public void setCode(String code) {
+//		this.code = code;
+//	}
 
 }

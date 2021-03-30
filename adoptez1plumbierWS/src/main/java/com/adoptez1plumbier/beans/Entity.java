@@ -1,7 +1,6 @@
 package com.adoptez1plumbier.beans;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 
@@ -39,9 +38,6 @@ public class Entity implements Serializable{
 	public void setDate(String date) {
 		this.date = date;
 	}
-	
-	
-
 	
 	
 	

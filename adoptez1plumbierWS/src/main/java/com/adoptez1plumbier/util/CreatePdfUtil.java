@@ -1,12 +1,10 @@
 package com.adoptez1plumbier.util;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.adoptez1plumbier.beans.Entity;
@@ -33,14 +31,13 @@ import com.itextpdf.text.pdf.codec.Base64;
 public class CreatePdfUtil {
 	private static final Logger logger = LoggerFactory.getLogger(CreatePdfUtil.class);
 
-	public ByteArrayInputStream createPdf(Entity datas) throws DocumentException, MalformedURLException, IOException {
+	public ByteArrayInputStream createPdf(Entity datas,long workid ) throws DocumentException, MalformedURLException, IOException {
 		Font blueFont = FontFactory.getFont("Helvetica", 18.0F, 1, (BaseColor) new CMYKColor(0, 0, 0, 255));
 		Font header = FontFactory.getFont("Helvetica", 14.0F, 1, (BaseColor) new CMYKColor(0, 0, 0, 255));
 		String IMG1 = "img/bien.png";
 		String IMG2 = "img/moyen.png";
 		String IMG3 = "img/mauvais.png";
 		String IMGTik = "img/tik.png";
-		BufferedImage image = null;
 		Document document = new Document(PageSize.A4, 20.0F, 20.0F, 40.0F, 80.0F);
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		Date date = new Date(System.currentTimeMillis());
@@ -51,20 +48,23 @@ public class CreatePdfUtil {
 			document.open();
 			Paragraph paragraph = new Paragraph("QUITUS TRAVAUX DE PLOMBERIE", blueFont);
 			paragraph.setAlignment(1);
-			document.add((Element) new Paragraph(  paragraph));
+			document.add( new Paragraph(paragraph));
 			PdfPTable table = null;
 			PdfPTable table1 = null;
 			PdfPTable table2 = null;
 			PdfPTable table4 = null;
+			PdfPTable table5 = null;
 			List<SectionData> sectiondatas = null;
-			image = new BufferedImage(50, 50, 2);
+			
 			if (!datas.equals(null)) {
 				for (int j = 0; j < datas.getSections().size(); j++) {
 					if (datas.getSections().size() > 0) {
 						int sectiontype = ((Section) datas.getSections().get(j)).getSectionType();
+						String signature = datas.getSections().get(j).getSignatureBaseData();
 						sectiondatas = ((Section) datas.getSections().get(j)).getSectionData();
 						if (sectiontype == 0) {
 							if (sectiondatas.size() > 0) {
+								sectiondatas.get(0).setFieldInput(String.valueOf(workid));
 								table = new PdfPTable(2);
 								table.setWidthPercentage(100.0F);
 								table.setSpacingBefore(10.0F);
@@ -96,7 +96,7 @@ public class CreatePdfUtil {
 								cellHeader.setHorizontalAlignment(0);
 								cellHeader.setPadding(5.0F);
 								table1.addCell(cellHeader);
-								PdfPCell cellHeaderOu = new PdfPCell(  new Paragraph("OUI/NOM", header));
+								PdfPCell cellHeaderOu = new PdfPCell(  new Paragraph("OUI/NON", header));
 								cellHeaderOu.setBorderColor(BaseColor.BLACK);
 								cellHeaderOu.setHorizontalAlignment(1);
 								cellHeaderOu.setVerticalAlignment(1);
@@ -119,21 +119,25 @@ public class CreatePdfUtil {
 									cellname.setHorizontalAlignment(0);
 									cellname.setPadding(10.0F);
 									table1.addCell(cellname);
+									
 									PdfPCell cellfirstNumb = new PdfPCell();
-									if ((sectiondatas.get(d)).getFieldNumberFirstSection() == 0) {
-										cellfirstNumb = new PdfPCell(new Paragraph(OuiNon.NON.getMessage()));
-									} else {
+									if ((sectiondatas.get(d)).getIsFieldIsNumberSecondSection()) {
 										cellfirstNumb = new PdfPCell(new Paragraph(OuiNon.OUI.getMessage()));
+									} else {
+										cellfirstNumb = new PdfPCell(new Paragraph(OuiNon.NON.getMessage()));
 									}
 									cellfirstNumb.setBorderColor(BaseColor.BLACK);
 									cellfirstNumb.setHorizontalAlignment(1);
 									cellfirstNumb.setPadding(5.0F);
 									table1.addCell(cellfirstNumb);
+
 									PdfPCell cellsecondou = new PdfPCell();
 									if ((sectiondatas.get(d)).getIsFieldIsNumberSecondSection()) {
-										cellsecondou = new PdfPCell(new Paragraph(OuiNon.NOMBRETRUE.getMessage()));
+										cellsecondou = new PdfPCell(new Paragraph(String.valueOf(sectiondatas.get(d).getFieldNumberFirstSection())));
+										System.out.println(sectiondatas.get(d).getFieldNumberFirstSection());
 									} else {
-										cellsecondou = new PdfPCell(new Paragraph(OuiNon.NOMBREFALSE.getMessage()));
+										
+										cellsecondou = new PdfPCell(new Paragraph(" "));
 									}
 									cellsecondou.setBorderColor(BaseColor.BLACK);
 									cellsecondou.setHorizontalAlignment(1);
@@ -142,18 +146,18 @@ public class CreatePdfUtil {
 									
 									PdfPCell cellSecondImg;
 									if(sectiondatas.get(d).getFieldsImageSecondSection() != null) {
-										if(sectiondatas.get(d).getIsFieldIsNumberSecondSection())
+										if(sectiondatas.get(d).getIsFieldIsNumberSecondSection()) {
+											System.out.println("add :"+sectiondatas.get(d).getFieldsImageSecondSection());
 											cellSecondImg = new PdfPCell(Image.getInstance(Base64.decode(sectiondatas.get(d).getFieldsImageSecondSection())));
-										else
+										}else
 											cellSecondImg = new PdfPCell(  new Paragraph(" "));
 									}
 									else
-										cellSecondImg = new PdfPCell(  new Paragraph(" "));
-									
+									cellSecondImg = new PdfPCell(  new Paragraph(" "));
 									cellSecondImg.setBorderColor(BaseColor.BLACK);
 									cellSecondImg.setHorizontalAlignment(1);
 									cellSecondImg.setPadding(5.0F);
-									cellSecondImg.setFixedHeight(50.0F);
+									cellSecondImg.setFixedHeight(75.0F);
 									table1.addCell(cellSecondImg);
 								}
 							}
@@ -224,6 +228,26 @@ public class CreatePdfUtil {
 								table2.addCell(cellMavius);
 							}
 						}
+						else if (signature != null) {
+							table5 = new PdfPTable(1);
+							table5.setWidthPercentage(100.0F);
+							table5.setSpacingBefore(5.0F);
+							table5.setSpacingAfter(10.0F);;
+							PdfPCell cellheader = new PdfPCell(new Paragraph("SIGNATURE"));
+							cellheader.setBorderColor(BaseColor.WHITE);
+							cellheader.setHorizontalAlignment(Element.ALIGN_LEFT);
+							cellheader.setPadding(5.0F);
+							table5.addCell(cellheader);
+							Image watermark_image = Image.getInstance(Base64.decode(signature));
+							watermark_image.scaleToFit(75.0F, 65.0F);
+							PdfPCell cellsign = new PdfPCell(watermark_image);
+							cellsign.setBorderColor(BaseColor.WHITE);
+							cellheader.setHorizontalAlignment(Element.ALIGN_LEFT);
+							cellheader.setFixedHeight(3.0F);
+							cellsign.setPadding(5.0F);
+							table5.addCell(cellsign);
+						}
+						
 					}
 				}
 
@@ -241,14 +265,19 @@ public class CreatePdfUtil {
 				cellDateData.setHorizontalAlignment(1);
 				cellDateData.setPadding(5.0F);
 				table4.addCell(cellDateData);
+
+				
 				PdfWriter.getInstance(document, out);
 				document.open();
-				document.add((Element) paragraph);
-				document.add((Element) Chunk.NEWLINE);
-				document.add((Element) table4);
-				document.add((Element) table);
-				document.add((Element) table1);
-				document.add((Element) table2);
+				document.add(paragraph);
+				document.add(Chunk.NEWLINE);
+				document.add(table4);
+				document.add(table);
+				document.add(table1);
+				document.add(table2);
+				document.add(Chunk.NEWLINE);
+				document.add(Chunk.NEWLINE);
+				document.add(table5);
 				document.close();
 			}
 
@@ -270,18 +299,17 @@ public class CreatePdfUtil {
 
 	public static void main(String[] args) throws MalformedURLException, IOException, DocumentException {
 
-		String IMG1 = "bien.png";
-		String IMG2 = "WebContent/moyen.png";
-		String IMG3 = "WebContent/WEB-INF/template/mauvais.png";
-
-		PdfPCell cellBienImg = new PdfPCell();
-
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		Date date = new Date(System.currentTimeMillis());
-		System.out.println(formatter.format(date));
-		Image img1 = Image.getInstance(IMG1);
-		Image img2 = Image.getInstance(IMG2);
-		Image img3 = Image.getInstance(IMG3);
+//		String IMG1 = "bien.png";
+//		String IMG2 = "WebContent/moyen.png";
+//		String IMG3 = "WebContent/WEB-INF/template/mauvais.png";
+//
+//
+//		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//		Date date = new Date(System.currentTimeMillis());
+//		System.out.println(formatter.format(date));
+//		Image img1 = Image.getInstance(IMG1);
+//		Image img2 = Image.getInstance(IMG2);
+//		Image img3 = Image.getInstance(IMG3);
 		
 		
 
