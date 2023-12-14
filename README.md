@@ -7,7 +7,7 @@ The project is an example of a medium-level application developed using Java Spr
 Project src structure directories.
 
 	src/main/java/  
-	├─ com/adoptez1plumbier
+	├─ com/springMvcWebService
 	│  ├─ bean/
 	|  |  ├─ entity.java
 	|  |  ├─ PdfData.java 
