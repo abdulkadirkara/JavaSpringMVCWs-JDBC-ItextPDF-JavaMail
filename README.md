@@ -1,6 +1,6 @@
-# Medium Level NestJS Project
+# Java Spring MVC + JDBC + JAVA mail + ItextPDF 
 
-The project is an example of a medium-level application developed using NestJS. The project includes the following features:
+The project is an example of a medium-level application developed using Java Spring Framework. The project includes the following features:
 
 ## Directory structure
 
@@ -51,8 +51,6 @@ src/main/java
 
 
 └─## Installation and Setup
-
-After successfully starting the project, you can access the API at [http://localhost:3000](http://localhost:3000).
 
 ## Spring MVC Framework
 Learn more about logging using [MVC Framework](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/mvc.html).
