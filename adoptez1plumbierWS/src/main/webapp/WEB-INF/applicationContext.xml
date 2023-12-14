@@ -39,17 +39,17 @@
 		<property name="driverClassName"
 			value="com.mysql.jdbc.Driver" />
 		<property name="url"
-			value="jdbc:mysql://37.148.210.196:3306/mydb" />
+			value="jdbc:mysql://<Address>:3306/mydb" />
 		<property name="username" value="root" />
-		<property name="password" value="Mfm040761" />
+		<property name="password" value="" />
 	</bean>
 	
 	<bean id="mailSender"
 		class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="smtp.gmail.com" />
 		<property name="port" value="587" />
-		<property name="username" value="fransaortaklari@gmail.com" />
-		<property name="password" value="mfm040762" />
+		<property name="username" value="" />
+		<property name="password" value="" />
 		<property name="javaMailProperties">
 			<props>
 				<prop key="mail.transport.protocol">smtp</prop>
